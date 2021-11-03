@@ -9,7 +9,7 @@
 #    - data_dir = (relative) folder with traing/validation images ('document_images')
 #    - epoch = number of passes of the entire training dataset in the machine learning algorithm ('10')
 #    - path = (relative) folder with images that need to be predicted ('test')
-# 3. in terminal: '$ python document_classifier_keras.py'
+# 3. in terminal: '$ python document_classifier_keras.py -d data_dir -p path [-e 10] '
 # 4. results are written to csv file 'predicted_image_types.csv'
 
 # see https://www.tensorflow.org/tutorials/images/classification
@@ -20,12 +20,26 @@ import os
 import PIL
 import tensorflow as tf
 import pathlib
+import argparse
 
 from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
 
-data_dir = 'document_images'
+# construct the argument parse and parse the arguments
+ap = argparse.ArgumentParser()
+ap.add_argument("-d", "--data_dir", default="document_images",
+	help="path to traing images")
+ap.add_argument("-p", "--path", default="path",
+	help="path to input images")
+ap.add_argument("-e", "--epoch", default="10", type=int,
+	help="number of epochs")
+args = vars(ap.parse_args())
+
+path = args["path"]
+data_dir = args["data_dir"]
+epoch = args["epoch"]
+
 data_dir = pathlib.Path(data_dir)
 subfolders = os.listdir(data_dir)
 num_classes = len(subfolders)
