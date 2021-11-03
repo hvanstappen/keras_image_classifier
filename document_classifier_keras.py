@@ -1,6 +1,6 @@
 # Classify images, based on training data
-# 
-# Usage: 
+#
+# Usage:
 # 1. create folder with:
 #    - folder with training data (one folder for each type)
 #    - folder with images to be classified
@@ -73,7 +73,7 @@ train_ds = tf.keras.utils.image_dataset_from_directory(
   seed=123,
   image_size=(img_height, img_width),
   batch_size=batch_size)
-  
+
 val_ds = tf.keras.utils.image_dataset_from_directory(
   data_dir,
   validation_split=0.2,
@@ -81,11 +81,11 @@ val_ds = tf.keras.utils.image_dataset_from_directory(
   seed=123,
   image_size=(img_height, img_width),
   batch_size=batch_size)
-  
+
 class_names = train_ds.class_names
 print("class_names: ", class_names)
 
-# Configure the dataset for performance  
+# Configure the dataset for performance
 AUTOTUNE = tf.data.AUTOTUNE
 
 train_ds = train_ds.cache().shuffle(1000).prefetch(buffer_size=AUTOTUNE)
@@ -93,7 +93,6 @@ val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
 
 # Standardize the data
 # Create the model
-# num_classes = data_dir_number
 
 model = Sequential([
   layers.Rescaling(1./255, input_shape=(img_height, img_width, 3)),
@@ -112,7 +111,7 @@ model = Sequential([
 model.compile(optimizer='adam',
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
-              
+
 model.summary()
 
 # Train the model
@@ -157,7 +156,7 @@ csv = open('predicted_image_types.csv','w')
 
 for f in files:
 	f = path+'/'+f
-	
+
 	img = keras.preprocessing.image.load_img(
 	    f, target_size=(img_height, img_width)
 	)
@@ -175,8 +174,9 @@ for f in files:
 	# write result per image
 	csv.write(str(f))
 	csv.write(";")
-	csv.write(class_names[np.argmax(score)])	
+	csv.write(class_names[np.argmax(score)])
 	csv.write(";")
 	csv.write(str(100 * np.max(score)))
 	csv.write("\n")
 
+print("Done. Processed all ", image_count, " images")
